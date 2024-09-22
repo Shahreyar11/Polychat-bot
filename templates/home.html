@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockChat AI</title>
+    <style>
+        body {
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    background-color: #0a0e17;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #00ff00;
+    position: relative;
+    overflow: hidden;
+}
+
+.blockchain-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    animation: moveBackground 20s linear infinite;
+    z-index: -1;
+}
+
+@keyframes moveBackground {
+    0% { background-position: 0 0; }
+    100% { background-position: 20px 20px; }
+}
+
+.auth-buttons {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.heading {
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(0,255,0,0.5);
+}
+
+.subheading {
+    font-size: 18px;
+    margin-bottom: 30px;
+    text-align: center;
+    color: #00cc00;
+}
+
+button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    border: 2px solid #00ff00;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: rgba(0,255,0,0.1);
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(0,255,0,0.5);
+    background-color: rgba(0,255,0,0.2);
+}
+
+.start-button {
+    margin-top: 20px;
+}
+
+@media (max-width: 480px) {
+    .heading {
+        font-size: 32px;
+    }
+    
+    .subheading {
+        font-size: 16px;
+    }
+    
+    button {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+    
+    .auth-buttons {
+        top: 10px;
+        right: 10px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="blockchain-background"></div>
+    <div class="auth-buttons">
+        <button class="connect-wallet-button">Connect Wallet</button>
+    </div>
+    <h1 class="heading">Welcome to PolyChat AI</h1>
+    <p class="subheading">Decentralized Conversations Powered by GaiaNet</p>
+    <a href="/chatbot">
+        <button class="start-button">Start Secure Chat</button>
+    </a>
+</body>
+</html>

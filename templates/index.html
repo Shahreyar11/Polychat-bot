@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GaiaNet Chat</title>
+    <style>
+        :root {
+            --neon-green: #00ff00;
+            --dark-bg: #000000;
+            --grid-color: #001100;
+            --text-shadow: 0 0 5px var(--neon-green);
+            --box-shadow: 0 0 10px var(--neon-green);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        body {
+            background-color: var(--dark-bg);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 20px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--neon-green);
+        }
+        .chatbot-container {
+            background-color: rgba(0, 17, 0, 0.7);
+            width: 600px;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--neon-green);
+        }
+        header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 255, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--neon-green);
+        }
+        header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--neon-green);
+            text-shadow: var(--text-shadow);
+        }
+        header p {
+            font-size: 16px;
+            color: var(--neon-green);
+        }
+        .chat-window {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            height: 450px;
+            overflow-y: auto;
+            background: rgba(0, 17, 0, 0.5);
+            border-top: 1px solid var(--neon-green);
+        }
+        .bot-message, .user-message {
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            width: fit-content;
+            border: 1px solid var(--neon-green);
+        }
+        .bot-message {
+            background-color: rgba(0, 255, 0, 0.1);
+            align-self: flex-start;
+        }
+        .user-message {
+            background-color: rgba(0, 255, 0, 0.2);
+            align-self: flex-end;
+        }
+        .input-container {
+            display: flex;
+            padding: 10px 15px;
+            background-color: rgba(0, 17, 0, 0.7);
+            border-top: 1px solid var(--neon-green);
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--neon-green);
+            border-radius: 25px;
+            background-color: rgba(0, 255, 0, 0.1);
+            color: var(--neon-green);
+            font-size: 16px;
+            margin-right: 10px;
+            outline: none;
+        }
+        input::placeholder {
+            color: rgba(0, 255, 0, 0.5);
+        }
+        button {
+            padding: 10px;
+            border: 1px solid var(--neon-green);
+            background-color: transparent;
+            border-radius: 50%;
+            color: var(--neon-green);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 5px;
+        }
+        button:hover {
+            background-color: var(--neon-green);
+            color: var(--dark-bg);
+            box-shadow: var(--box-shadow);
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="chatbot-container">
+        <header>
+            <h1>Talk to PolyChat</h1>
+            <p>Your AI companion for insightful conversations</p>
+        </header>
+        <div class="chat-window" id="chat-container">
+            <div class="bot-message">
+                <p>Hello! How can I assist you today?</p>
+            </div>
+        </div>
+        <div class="input-container">
+            <input type="text" placeholder="Type your message..." id="user-input">
+            <button id="send-button">Send</button>
+            <button id="mic-button">🎤</button> <!-- Microphone button -->
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('#send-button').click(function() {
+                sendMessage(false); // false indicates text input
+            });
+            $('#user-input').keypress(function(e) {
+                if (e.which == 13) {
+                    sendMessage(false); // false indicates text input
+                }
+            });
+
+            // Handle the microphone button click
+            $('#mic-button').click(function() {
+                startVoiceRecognition();
+            });
+        });
+
+        // Function to start voice recognition
+        function startVoiceRecognition() {
+            if (!('webkitSpeechRecognition' in window)) {
+                alert("Your browser doesn't support speech recognition.");
+                return;
+            }
+
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = "en-US";
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                $('#user-input').val(transcript);
+                sendMessage(true); // true indicates voice input
+            };
+            recognition.onerror = function(event) {
+                console.error("Speech recognition error", event);
+            };
+            recognition.start();
+        }
+
+        function sendMessage(isVoiceInput) {
+            const userInput = $('#user-input').val().trim();
+            if (userInput === "") return;
+            $('#chat-container').append(`<div class="user-message"><p>${userInput}</p></div>`);
+            $('#chat-container').scrollTop($('#chat-container')[0].scrollHeight);
+
+            $.ajax({
+                url: '/chat',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ message: userInput, isVoice: isVoiceInput }),
+                success: function(response) {
+                    const aiMessage = response.message;
+                    $('#chat-container').append(`<div class="bot-message"><p>${aiMessage}</p></div>`);
+                    $('#chat-container').scrollTop($('#chat-container')[0].scrollHeight);
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    $('#chat-container').append(`<div class="bot-message"><p>Sorry, something went wrong.</p></div>`);
+                    $('#chat-container').scrollTop($('#chat-container')[0].scrollHeight);
+                }
+            });
+
+            $('#user-input').val('');
+        }
+    </script>
+</body>
+</html>
