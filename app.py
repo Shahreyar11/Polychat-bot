@@ -36,13 +36,16 @@ def gaia_request(prompt):
         "model": GAIA_MODEL_NAME,
         "messages": [{"role": "user", "content": prompt}]
     }
-    try:
-        response = requests.post(f"{GAIA_API_ENDPOINT}/chat/completions", headers=headers, json=data)
-        response.raise_for_status()
+    
+    response = requests.post(f"{GAIA_API_ENDPOINT}/chat/completions", headers=headers, json=data)
+    
+    # Check if the response was successful
+    if response.status_code == 200:
         return response.json()
-    except requests.RequestException as e:
-        logging.error(f"Error with GaiaNet API request: {e}")
+    else:
+        logging.error(f"Error with GaiaNet API request: {response.status_code} - {response.text}")
         return {"choices": [{"message": {"content": "Sorry, I couldn't fetch a response from GaiaNet."}}]}
+
 
 def analyze_sentiment(text):
     scores = sentiment_analyzer.polarity_scores(text)
