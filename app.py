@@ -12,7 +12,6 @@ app = Flask(__name__)
 # GaiaNet Configuration
 GAIA_API_ENDPOINT = os.getenv("GAIA_API_ENDPOINT", "https://llama.us.gaianet.network/v1")
 GAIA_MODEL_NAME = os.getenv("GAIA_MODEL_NAME", "llama")
-
 translator = Translator()
 sentiment_analyzer = SentimentIntensityAnalyzer()
 
